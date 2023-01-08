@@ -1,8 +1,16 @@
+import pygame
+
 import engineStateMachine
+import engineConfigState
 
 class Engine():
     def __init__(self) -> None:
+        pygame.init()
+
+        self.window = pygame.display.set_mode([500, 500])
+
         self.state_machine = engineStateMachine.StateMachineController()
+        self.config = engineConfigState.ConfigStateController(window=self.window)
 
     def __str__(self) -> str:
         return f'Engine({self.state_machine.current_state.name = })'
@@ -19,10 +27,17 @@ class Engine():
                 self.state_simulation()
 
     def state_config(self) -> None:
-        t = 1e6
+        clock = pygame.time.Clock()
         while True == self.state_machine.is_config:
-            self.state_machine.goto_simulation()
+            pygame.display.set_caption(f'{round(clock.get_fps(), 2)}')
+            self.config.event_manager()
+            self.config.update()
+            self.config.draw()
+            clock.tick()
 
     def state_simulation(self) -> None:
+        clock = pygame.time.Clock()
         while True == self.state_machine.is_simulation:
-            exit()
+            pygame.display.set_caption(f'{round(clock.get_fps(), 2)}')
+            exit(0)
+            clock.tick()
