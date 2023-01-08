@@ -1,3 +1,4 @@
+import pygame
 import color
 
 class DefaultState():
@@ -13,3 +14,6 @@ class DefaultState():
 
     def event_manager(self):
         print("event_manager")
+
+    def display_fps_in_caption(self, clock):
+        pygame.display.set_caption(f'{round(clock.get_fps(), 2)}')

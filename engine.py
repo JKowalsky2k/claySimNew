@@ -29,7 +29,7 @@ class Engine():
     def state_config(self) -> None:
         clock = pygame.time.Clock()
         while True == self.state_machine.is_config:
-            pygame.display.set_caption(f'{round(clock.get_fps(), 2)}')
+            self.config.display_fps_in_caption(clock=clock)
             self.config.event_manager()
             self.config.update()
             self.config.draw()
@@ -38,6 +38,6 @@ class Engine():
     def state_simulation(self) -> None:
         clock = pygame.time.Clock()
         while True == self.state_machine.is_simulation:
-            pygame.display.set_caption(f'{round(clock.get_fps(), 2)}')
+            self.config.display_fps_in_caption(clock=clock)
             exit(0)
             clock.tick()
