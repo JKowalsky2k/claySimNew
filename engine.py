@@ -1,4 +1,5 @@
 import pygame
+import json
 
 import engineStateMachine
 import engineConfigState
@@ -7,7 +8,11 @@ class Engine():
     def __init__(self) -> None:
         pygame.init()
 
-        self.window = pygame.display.set_mode([500, 500])
+        with open('default_settings.json') as default_settings_file:
+            self.settings = json.load(default_settings_file)
+
+        self.window = pygame.display.set_mode([self.settings["window"]["width"], self.settings["window"]["height"]])
+        pygame.display.set_caption(f'{self.settings["window"]["title"]}')
 
         self.state_machine = engineStateMachine.StateMachineController()
         self.config = engineConfigState.ConfigStateController(window=self.window)

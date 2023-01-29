@@ -1,20 +1,22 @@
 import pygame
-import color
+import custom_gui.container as container
+import custom_gui.defaultElement as defaultElement
 
-class Button():
-    def __init__(self, window, position=pygame.math.Vector2(0, 0), size=pygame.math.Vector2(100, 40), text="") -> None:
-        self.color_manager = color.Color()
+class Button(defaultElement.DefaultElement):
+
+    def __init__(   self, window, 
+                    position=pygame.math.Vector2(0, 0), 
+                    size=pygame.math.Vector2(100, 40), 
+                    text="",
+                    font_size=20,
+                    default_status=True,
+                    container=container.Container(pygame.math.Vector2(0, 0))
+                ) -> None:
+        super().__init__(window, position, size, text, font_size, container)
         self.foreground_color = self.color_manager.button_fg
         self.background_color = self.color_manager.button_bg
         self.color = self.foreground_color
-        self.window = window
-        self.font = pygame.font.SysFont(None, 20)
-        self.text = self.font.render(f'{text}', True, self.color_manager.white)
-
-        self.position = position
-        self.size = size
-        self.rect = pygame.Rect(self.position.x, self.position.y, self.size.x, self.size.y)
-        self.status = True
+        self.status = default_status
 
     def is_clicked(self, event: pygame.event):
         return self.is_hover() and event == pygame.MOUSEBUTTONDOWN
@@ -29,22 +31,11 @@ class Button():
         self.color = self.foreground_color
         return False
 
-    def set_text(self, text: str):
-        self.text = self.font.render(f'{text}', True, self.color_manager.white)
-
-    def set_size(self, new_size: pygame.math.Vector2):
-        self.size = new_size
-        self.rect = pygame.Rect(self.position.x, self.position.y, self.size.x, self.size.y)
-
-    def set_postion(self, new_position: pygame.math.Vector2):
-        self.position = new_position
-        self.rect = pygame.Rect(self.position.x, self.position.y, self.size.x, self.size.y)
-
     def disable(self):
         self.status = False
     
     def enable(self):
-        self.status = True 
+        self.status = True
     
     def draw(self):
         if True == self.status:
