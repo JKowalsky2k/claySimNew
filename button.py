@@ -16,8 +16,8 @@ class Button():
         self.rect = pygame.Rect(self.position.x, self.position.y, self.size.x, self.size.y)
         self.status = True
 
-    def is_clicked(self):
-        return self.is_hover() and any(pygame.mouse.get_pressed())
+    def is_clicked(self, event: pygame.event):
+        return self.is_hover() and event == pygame.MOUSEBUTTONDOWN
 
     def is_hover(self):
         if True == self.status:
