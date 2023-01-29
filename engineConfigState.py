@@ -1,9 +1,11 @@
 import pygame
 import engineDefaultState
+import button
 
 class ConfigStateController(engineDefaultState.DefaultState):
     def __init__(self, window) -> None:
         super().__init__(window)
+        self.button = button.Button(window, text="cbe")
 
     def event_manager(self):
         for event in pygame.event.get():
@@ -12,8 +14,8 @@ class ConfigStateController(engineDefaultState.DefaultState):
 
     def draw(self):
         self.window.fill(self.color.black)
-        pygame.draw.circle(self.window, self.color.green, (250, 250), 75)
+        self.button.draw()
         pygame.display.flip()
 
     def update(self):
-        pass
+        self.button.is_hover()
