@@ -10,11 +10,11 @@ class Button(defaultElement.DefaultElement):
                     text="",
                     font_size=20,
                     default_status=True,
+                    color="blue",
                     container=container.Container(pygame.math.Vector2(0, 0))
                 ) -> None:
         super().__init__(window, position, size, text, font_size, container)
-        self.foreground_color = self.color_manager.button_fg
-        self.background_color = self.color_manager.button_bg
+        self.foreground_color, self.background_color = self.color_manager.get_button_color_theme(color)
         self.color = self.foreground_color
         self.status = default_status
 
@@ -39,7 +39,7 @@ class Button(defaultElement.DefaultElement):
     
     def draw(self):
         if True == self.status:
-            pygame.draw.rect(surface=self.window, color=self.color, rect=self.rect, border_radius=10)
+            pygame.draw.rect(surface=self.window, color=self.color, rect=self.rect, border_radius=5)
         else:
-            pygame.draw.rect(surface=self.window, color=self.color_manager.buttin_disable, rect=self.rect, border_radius=10)
+            pygame.draw.rect(surface=self.window, color=self.color_manager.buttin_disable, rect=self.rect, border_radius=5)
         self.window.blit(self.text, self.text.get_rect(center=self.rect.center))

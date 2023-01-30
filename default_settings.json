@@ -4,5 +4,10 @@
         "title": "-- TEST VERSION --",
         "width": 800,
         "height": 600
+    },
+    "hud":
+    {
+        "width": 705,
+        "height": 140
     }
 }

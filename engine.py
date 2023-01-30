@@ -11,7 +11,7 @@ class Engine():
         with open('default_settings.json') as default_settings_file:
             self.settings = json.load(default_settings_file)
 
-        self.window = pygame.display.set_mode([self.settings["window"]["width"], self.settings["window"]["height"]])
+        self.window = pygame.display.set_mode([self.settings["window"]["width"], self.settings["window"]["height"]], flags=pygame.RESIZABLE)
         pygame.display.set_caption(f'{self.settings["window"]["title"]}')
 
         self.state_machine = engineStateMachine.StateMachineController()
