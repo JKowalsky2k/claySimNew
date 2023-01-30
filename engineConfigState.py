@@ -7,12 +7,12 @@ import custom_gui.button as button
 import custom_gui.label as label
 
 class ConfigStateController(engineDefaultState.DefaultState):
-    def __init__(self, window) -> None:
-        super().__init__(window)
+    def __init__(self, window, start_point1, start_point2) -> None:
+        super().__init__(window, start_point1, start_point2)
         with open('default_settings.json') as default_settings_file:
             self.settings = json.load(default_settings_file)
         self.local_window_width, self.local_widow_height = pygame.display.get_surface().get_size()
-        self.is_second_house_added = False
+        self.is_secound_house_added = False
         self.create_gui()
 
     def event_manager(self):
@@ -37,7 +37,8 @@ class ConfigStateController(engineDefaultState.DefaultState):
                 print("Angle Dec 2")
 
             if self.button_add_second_house.is_clicked(event=event.type):
-                self.is_second_house_added = True
+                self.is_secound_house_added = True
+                self.controls.pop()
                 self.button_velocity_increase2.enable()
                 self.button_velocity_decrease2.enable()
                 self.button_angle_increase2.enable()
@@ -45,7 +46,8 @@ class ConfigStateController(engineDefaultState.DefaultState):
                 self.button_remove_second_house.enable()
                 self.button_add_second_house.disable()
             elif self.button_remove_second_house.is_clicked(event=event.type):
-                self.is_second_house_added = False
+                self.is_secound_house_added = False
+                self.controls.append(self.button_add_second_house)
                 self.button_velocity_increase2.disable()
                 self.button_velocity_decrease2.disable()
                 self.button_angle_increase2.disable()
@@ -60,6 +62,22 @@ class ConfigStateController(engineDefaultState.DefaultState):
             if self.button_start.is_clicked(event=event.type):
                 print("Start")
 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if 1 == event.button:
+                    if True == self.start_point1.get_rect().collidepoint(pygame.mouse.get_pos()):
+                        self.start_point1.set_movable(state=True)
+                    elif True == self.start_point2.get_rect().collidepoint(pygame.mouse.get_pos()):
+                        self.start_point2.set_movable(state=True)
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if 1 == event.button:
+                    self.start_point1.set_movable(state=False)
+                    self.start_point2.set_movable(state=False)
+            elif event.type == pygame.MOUSEMOTION:
+                if True == self.start_point1.is_movable():
+                    self.update_object_position(self.start_point1)
+                elif True == self.start_point2.is_movable():
+                    self.update_object_position(self.start_point2)                        
+
     def draw(self):
         self.window.fill(self.color.black)
         if True == self.container.check_update():
@@ -68,8 +86,11 @@ class ConfigStateController(engineDefaultState.DefaultState):
             self.container.update_finished()
         for control in self.controls:
             control.draw()
-        if False == self.is_second_house_added:
-            self.button_add_second_house.draw() 
+        
+        self.start_point1.draw()
+        if True == self.is_secound_house_added:
+            self.start_point2.draw()
+
         pygame.display.flip()
 
     def update(self):
@@ -144,10 +165,24 @@ class ConfigStateController(engineDefaultState.DefaultState):
         self.button_remove_second_house.disable()
         self.buttons.append(self.button_remove_second_house)
         self.button_add_second_house = button.Button(self.window, position=pygame.math.Vector2(220, 0), size=pygame.math.Vector2(265, 130), text="Add", color="yellow", font_size=50, container=self.container)
-        # self.buttons.append(self.button_add_second_house)
+        self.buttons.append(self.button_add_second_house)
 
         self.controls.extend(self.buttons)
         print(f'{self.controls[-1] = }')
 
     def check_is_resolution_changed(self):
         return (self.local_window_width, self.local_widow_height) != pygame.display.get_surface().get_size()
+
+    def update_object_position(self, object):
+        if object.get_rect().width//2 > pygame.mouse.get_pos()[0]:
+            object.set_position_x(new_x=object.get_rect().width//2)
+        elif pygame.mouse.get_pos()[0] > self.local_window_width-object.get_rect().width//2:
+            object.set_position_x(new_x=self.local_window_width-object.get_rect().width//2)
+        else:
+            object.set_position_x(new_x=pygame.mouse.get_pos()[0])
+        if pygame.mouse.get_pos()[1] < object.get_rect().height//2:
+            object.set_position_y(new_y=object.get_rect().height//2)
+        elif pygame.mouse.get_pos()[1] > self.local_widow_height-self.settings["hud"]["height"]-object.get_rect().height//2:
+            object.set_position_y(new_y=self.local_widow_height-self.settings["hud"]["height"]-object.get_rect().height//2)
+        else:
+            object.set_position_y(new_y= pygame.mouse.get_pos()[1])

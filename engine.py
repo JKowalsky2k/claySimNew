@@ -3,6 +3,8 @@ import json
 
 import engineStateMachine
 import engineConfigState
+import color
+import house
 
 class Engine():
     def __init__(self) -> None:
@@ -11,11 +13,14 @@ class Engine():
         with open('default_settings.json') as default_settings_file:
             self.settings = json.load(default_settings_file)
 
-        self.window = pygame.display.set_mode([self.settings["window"]["width"], self.settings["window"]["height"]], flags=pygame.RESIZABLE)
+        self.window = pygame.display.set_mode(size=(self.settings["window"]["width"], self.settings["window"]["height"]), flags=pygame.RESIZABLE)
         pygame.display.set_caption(f'{self.settings["window"]["title"]}')
 
+        self.start_point1 = house.House(self.window, position=pygame.math.Vector2(tuple(map(lambda dimension: dimension//2, pygame.display.get_surface().get_size()))), color=color.Color().blue_button_fg)
+        self.start_point2 = house.House(self.window, position=pygame.math.Vector2(tuple(map(lambda dimension: dimension//2, pygame.display.get_surface().get_size()))), color=color.Color().yellow_button_fg)
+
         self.state_machine = engineStateMachine.StateMachineController()
-        self.config = engineConfigState.ConfigStateController(window=self.window)
+        self.config = engineConfigState.ConfigStateController(window=self.window, start_point1=self.start_point1, start_point2=self.start_point2)
 
     def __str__(self) -> str:
         return f'Engine({self.state_machine.current_state.name = })'

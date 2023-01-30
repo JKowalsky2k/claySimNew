@@ -2,9 +2,11 @@ import pygame
 import color
 
 class DefaultState():
-    def __init__(self, window) -> None:
+    def __init__(self, window, start_point1, start_point2) -> None:
         self.color = color.Color()
         self.window = window
+        self.start_point1 = start_point1
+        self.start_point2 = start_point2
 
     def update(self):
         print("update")
