@@ -17,18 +17,20 @@ class Button(defaultElement.DefaultElement):
         self.foreground_color, self.background_color = self.color_manager.get_button_color_theme(color)
         self.color = self.foreground_color
         self.status = default_status
+        self.is_visible = True
 
     def is_clicked(self, event: pygame.event):
         return self.is_hover() and event == pygame.MOUSEBUTTONDOWN
 
     def is_hover(self):
-        if True == self.status:
-            mouse_posx, mouse_posy = pygame.mouse.get_pos()
-            if  self.position.x < mouse_posx < self.position.x + self.size.x and \
-                self.position.y < mouse_posy < self.position.y + self.size.y:
-                self.color = self.background_color
-                return True
-        self.color = self.foreground_color
+        if True == self.is_visible:
+            if True == self.status:
+                mouse_posx, mouse_posy = pygame.mouse.get_pos()
+                if  self.position.x < mouse_posx < self.position.x + self.size.x and \
+                    self.position.y < mouse_posy < self.position.y + self.size.y:
+                    self.color = self.background_color
+                    return True
+            self.color = self.foreground_color
         return False
 
     def disable(self):
@@ -36,10 +38,17 @@ class Button(defaultElement.DefaultElement):
     
     def enable(self):
         self.status = True
+
+    def invisible(self):
+        self.is_visible = False
+
+    def visible(self):
+        self.is_visible = True
     
     def draw(self):
-        if True == self.status:
-            pygame.draw.rect(surface=self.window, color=self.color, rect=self.rect, border_radius=5)
-        else:
-            pygame.draw.rect(surface=self.window, color=self.color_manager.buttin_disable, rect=self.rect, border_radius=5)
-        self.window.blit(self.text, self.text.get_rect(center=self.rect.center))
+        if True == self.is_visible:
+            if True == self.status:
+                pygame.draw.rect(surface=self.window, color=self.color, rect=self.rect, border_radius=5)
+            else:
+                pygame.draw.rect(surface=self.window, color=self.color_manager.buttin_disable, rect=self.rect, border_radius=5)
+            self.window.blit(self.text, self.text.get_rect(center=self.rect.center))

@@ -5,6 +5,7 @@ import engineStateMachine
 import engineConfigState
 import color
 import house
+import trajectory
 
 class Engine():
     def __init__(self) -> None:
@@ -19,8 +20,13 @@ class Engine():
         self.start_point1 = house.House(self.window, position=pygame.math.Vector2(tuple(map(lambda dimension: dimension//2, pygame.display.get_surface().get_size()))), color=color.Color().blue_button_fg)
         self.start_point2 = house.House(self.window, position=pygame.math.Vector2(tuple(map(lambda dimension: dimension//2, pygame.display.get_surface().get_size()))), color=color.Color().yellow_button_fg)
 
+        self.trajectory1 = trajectory.Trajectory(self.window)
+        self.trajectory1.set_offset(self.start_point1.get_position())
+        self.trajectory2 = trajectory.Trajectory(self.window)
+        self.trajectory2.set_offset(self.start_point2.get_position())
+
         self.state_machine = engineStateMachine.StateMachineController()
-        self.config = engineConfigState.ConfigStateController(window=self.window, start_point1=self.start_point1, start_point2=self.start_point2)
+        self.config = engineConfigState.ConfigStateController(window=self.window, start_point1=self.start_point1, start_point2=self.start_point2, trajectory1=self.trajectory1, trajectory2=self.trajectory2)
 
     def __str__(self) -> str:
         return f'Engine({self.state_machine.current_state.name = })'
@@ -40,7 +46,8 @@ class Engine():
         clock = pygame.time.Clock()
         while True == self.state_machine.is_config:
             self.config.display_fps_in_caption(clock=clock)
-            self.config.event_manager()
+            if self.config.event_manager():
+                self.state_machine.goto_simulation()
             self.config.update()
             self.config.draw()
             clock.tick()
@@ -49,5 +56,5 @@ class Engine():
         clock = pygame.time.Clock()
         while True == self.state_machine.is_simulation:
             self.config.display_fps_in_caption(clock=clock)
-            exit(0)
+            self.state_machine.goto_config()
             clock.tick()

@@ -1,0 +1,14 @@
+{
+    "velocity":
+    {
+        "max": 60,
+        "min": 10,
+        "step": 5
+    },
+    "angle":
+    {
+        "max": 360,
+        "min": 0,
+        "step": 15
+    }
+}
