@@ -20,6 +20,7 @@ class DefaultElement:
         self.size = size
         self.rect = pygame.Rect(self.position.x, self.position.y, self.size.x, self.size.y)
         self.container = container
+        self.visiblity = True
 
     def set_text(self, text: str):
         self.text = self.font.render(f'{text}', True, self.color_manager.white)
@@ -35,3 +36,12 @@ class DefaultElement:
     def set_postion(self, new_position: pygame.math.Vector2):
         self.relative_position = new_position
         self.update_position()
+
+    def is_visible(self):
+        return self.visiblity
+        
+    def invisible(self):
+        self.visiblity = False
+
+    def visible(self):
+        self.visiblity = True

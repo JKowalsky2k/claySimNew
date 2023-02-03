@@ -16,15 +16,14 @@ class Button(defaultElement.DefaultElement):
         super().__init__(window, position, size, text, font_size, container)
         self.foreground_color, self.background_color = self.color_manager.get_button_color_theme(color)
         self.color = self.foreground_color
-        self.status = default_status
-        self.is_visible = True
+        self.is_enabled = default_status
 
     def is_clicked(self, event: pygame.event):
         return self.is_hover() and event == pygame.MOUSEBUTTONDOWN
 
     def is_hover(self):
-        if True == self.is_visible:
-            if True == self.status:
+        if True == self.visiblity:
+            if True == self.is_enabled:
                 mouse_posx, mouse_posy = pygame.mouse.get_pos()
                 if  self.position.x < mouse_posx < self.position.x + self.size.x and \
                     self.position.y < mouse_posy < self.position.y + self.size.y:
@@ -34,20 +33,14 @@ class Button(defaultElement.DefaultElement):
         return False
 
     def disable(self):
-        self.status = False
+        self.is_enabled = False
     
     def enable(self):
-        self.status = True
-
-    def invisible(self):
-        self.is_visible = False
-
-    def visible(self):
-        self.is_visible = True
+        self.is_enabled = True
     
     def draw(self):
-        if True == self.is_visible:
-            if True == self.status:
+        if True == self.visiblity:
+            if True == self.is_enabled:
                 pygame.draw.rect(surface=self.window, color=self.color, rect=self.rect, border_radius=5)
             else:
                 pygame.draw.rect(surface=self.window, color=self.color_manager.buttin_disable, rect=self.rect, border_radius=5)

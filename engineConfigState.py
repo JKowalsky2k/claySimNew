@@ -12,7 +12,6 @@ class ConfigStateController(engineDefaultState.DefaultState):
         with open('default_settings.json') as default_settings_file:
             self.default_settings = json.load(default_settings_file)
         self.local_window_width, self.local_widow_height = pygame.display.get_surface().get_size()
-        self.is_secound_house_added = False
         self.trajectory1.calculate()
         self.trajectory1.set_offset(self.start_point1.get_position())
         self.trajectory2.calculate()
@@ -26,30 +25,37 @@ class ConfigStateController(engineDefaultState.DefaultState):
             if self.button_velocity_increase1.is_clicked(event=event.type):
                 self.trajectory1.increase_initial_velocity()
                 self.label_velocity_value1.set_text(self.trajectory1.get_initial_velocity())
+                self.trajectory1.calculate()
             if self.button_velocity_decrease1.is_clicked(event=event.type):
                 self.trajectory1.decrease_initial_velocity()
                 self.label_velocity_value1.set_text(self.trajectory1.get_initial_velocity())
+                self.trajectory1.calculate()
             if self.button_angle_increase1.is_clicked(event=event.type):
                 self.trajectory1.increase_angle()
                 self.label_angle_value1.set_text(self.trajectory1.get_angle())
+                self.trajectory1.calculate()
             if self.button_angle_decrease1.is_clicked(event=event.type):
                 self.trajectory1.decrease_angle()
                 self.label_angle_value1.set_text(self.trajectory1.get_angle())
+                self.trajectory1.calculate()
             if self.button_velocity_increase2.is_clicked(event=event.type):
                 self.trajectory2.increase_initial_velocity()
                 self.label_velocity_value2.set_text(self.trajectory2.get_initial_velocity())
+                self.trajectory2.calculate()
             if self.button_velocity_decrease2.is_clicked(event=event.type):
                 self.trajectory2.decrease_initial_velocity()
                 self.label_velocity_value2.set_text(self.trajectory2.get_initial_velocity())
+                self.trajectory2.calculate()
             if self.button_angle_increase2.is_clicked(event=event.type):
                 self.trajectory2.increase_angle()
                 self.label_angle_value2.set_text(self.trajectory2.get_angle())
+                self.trajectory2.calculate()
             if self.button_angle_decrease2.is_clicked(event=event.type):
                 self.trajectory2.decrease_angle()
                 self.label_angle_value2.set_text(self.trajectory2.get_angle())
+                self.trajectory2.calculate()
 
             if self.button_add_second_house.is_clicked(event=event.type):
-                self.is_secound_house_added = True
                 self.button_add_second_house.invisible()
                 self.button_velocity_increase2.enable()
                 self.button_velocity_decrease2.enable()
@@ -58,7 +64,6 @@ class ConfigStateController(engineDefaultState.DefaultState):
                 self.button_remove_second_house.enable()
                 self.button_add_second_house.disable()
             elif self.button_remove_second_house.is_clicked(event=event.type):
-                self.is_secound_house_added = False
                 self.button_add_second_house.visible()
                 self.button_velocity_increase2.disable()
                 self.button_velocity_decrease2.disable()
@@ -87,11 +92,9 @@ class ConfigStateController(engineDefaultState.DefaultState):
             elif event.type == pygame.MOUSEMOTION:
                 if True == self.start_point1.is_movable():
                     self.update_object_position(self.start_point1)
-                    # self.trajectory1.calculate()
                     self.trajectory1.set_offset(self.start_point1.get_position())
                 elif True == self.start_point2.is_movable():
                     self.update_object_position(self.start_point2)
-                    # self.trajectory2.calculate()
                     self.trajectory2.set_offset(self.start_point2.get_position())         
 
     def draw(self):
@@ -105,7 +108,7 @@ class ConfigStateController(engineDefaultState.DefaultState):
         
         self.trajectory1.draw()
         self.start_point1.draw()
-        if True == self.is_secound_house_added:
+        if False == self.button_add_second_house.is_visible():
             self.trajectory2.draw()
             self.start_point2.draw()
 
