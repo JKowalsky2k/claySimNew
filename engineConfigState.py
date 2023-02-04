@@ -7,8 +7,8 @@ import custom_gui.button as button
 import custom_gui.label as label
 
 class ConfigStateController(engineDefaultState.DefaultState):
-    def __init__(self, window, start_point1, start_point2, trajectory1, trajectory2) -> None:
-        super().__init__(window, start_point1, start_point2, trajectory1, trajectory2)
+    def __init__(self, window, start_point1, start_point2, end_point1, end_point2, trajectory1, trajectory2) -> None:
+        super().__init__(window, start_point1, start_point2, end_point1, end_point2, trajectory1, trajectory2)
         with open('default_settings.json') as default_settings_file:
             self.default_settings = json.load(default_settings_file)
         self.local_window_width, self.local_widow_height = pygame.display.get_surface().get_size()
@@ -26,18 +26,22 @@ class ConfigStateController(engineDefaultState.DefaultState):
                 self.trajectory1.increase_initial_velocity()
                 self.label_velocity_value1.set_text(self.trajectory1.get_initial_velocity())
                 self.trajectory1.calculate()
+                self.end_point1.set_default_posiiton()
             if self.button_velocity_decrease1.is_clicked(event=event.type):
                 self.trajectory1.decrease_initial_velocity()
                 self.label_velocity_value1.set_text(self.trajectory1.get_initial_velocity())
                 self.trajectory1.calculate()
+                self.end_point1.set_default_posiiton()
             if self.button_angle_increase1.is_clicked(event=event.type):
                 self.trajectory1.increase_angle()
                 self.label_angle_value1.set_text(self.trajectory1.get_angle())
                 self.trajectory1.calculate()
+                self.end_point1.set_default_posiiton()
             if self.button_angle_decrease1.is_clicked(event=event.type):
                 self.trajectory1.decrease_angle()
                 self.label_angle_value1.set_text(self.trajectory1.get_angle())
                 self.trajectory1.calculate()
+                self.end_point1.set_default_posiiton()
             if self.button_velocity_increase2.is_clicked(event=event.type):
                 self.trajectory2.increase_initial_velocity()
                 self.label_velocity_value2.set_text(self.trajectory2.get_initial_velocity())
@@ -81,36 +85,44 @@ class ConfigStateController(engineDefaultState.DefaultState):
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if 1 == event.button:
-                    if True == self.start_point1.get_rect().collidepoint(pygame.mouse.get_pos()):
+                    if True == self.end_point1.get_rect().collidepoint(pygame.mouse.get_pos()):
+                        self.end_point1.set_movable(state=True)
+                    elif True == self.start_point1.get_rect().collidepoint(pygame.mouse.get_pos()):
                         self.start_point1.set_movable(state=True)
                     elif True == self.start_point2.get_rect().collidepoint(pygame.mouse.get_pos()):
                         self.start_point2.set_movable(state=True)
             elif event.type == pygame.MOUSEBUTTONUP:
                 if 1 == event.button:
+                    self.end_point1.set_movable(state=False)
                     self.start_point1.set_movable(state=False)
                     self.start_point2.set_movable(state=False)
             elif event.type == pygame.MOUSEMOTION:
-                if True == self.start_point1.is_movable():
+                if True == self.end_point1.is_movable():
+                    self.end_point1.set_position(self.trajectory1.get_nearest_point_to_mouse_cursor())
+                elif True == self.start_point1.is_movable():
                     self.update_object_position(self.start_point1)
                     self.trajectory1.set_offset(self.start_point1.get_position())
+                    self.end_point1.set_offset(self.start_point1.get_position())
                 elif True == self.start_point2.is_movable():
                     self.update_object_position(self.start_point2)
-                    self.trajectory2.set_offset(self.start_point2.get_position())         
+                    self.trajectory2.set_offset(self.start_point2.get_position())     
 
     def draw(self):
         self.window.fill(self.color.black)
+        
+        self.trajectory1.draw()
+        self.start_point1.draw()
+        self.end_point1.draw()
+        if False == self.button_add_second_house.is_visible():
+            self.trajectory2.draw()
+            self.start_point2.draw()
+
         if True == self.container.check_update():
             for control in self.controls:
                 control.update_position()
             self.container.update_finished()
         for control in self.controls:
             control.draw()
-        
-        self.trajectory1.draw()
-        self.start_point1.draw()
-        if False == self.button_add_second_house.is_visible():
-            self.trajectory2.draw()
-            self.start_point2.draw()
 
         pygame.display.flip()
 
@@ -123,6 +135,8 @@ class ConfigStateController(engineDefaultState.DefaultState):
                 self.local_window_width, self.local_widow_height = self.default_settings["window"]["width"], self.default_settings["window"]["height"]
                 self.window = pygame.display.set_mode(size=(self.local_window_width, self.local_widow_height), flags=pygame.RESIZABLE)
             self.container.set_position(pygame.math.Vector2(self.local_window_width/2-self.default_settings["hud"]["width"]/2, self.local_widow_height-self.default_settings["hud"]["height"]))
+        if True == self.trajectory1.check_if_point_is_out_of_screen(self.end_point1.get_position()):
+            self.end_point1.set_default_posiiton()
 
     def create_gui(self):
         self.controls = []

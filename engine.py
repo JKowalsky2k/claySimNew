@@ -5,6 +5,7 @@ import engineStateMachine
 import engineConfigState
 import color
 import house
+import point
 import trajectory
 
 class Engine():
@@ -20,13 +21,17 @@ class Engine():
         self.start_point1 = house.House(self.window, position=pygame.math.Vector2(tuple(map(lambda dimension: dimension//2, pygame.display.get_surface().get_size()))), color=color.Color().blue_button_fg)
         self.start_point2 = house.House(self.window, position=pygame.math.Vector2(tuple(map(lambda dimension: dimension//2, pygame.display.get_surface().get_size()))), color=color.Color().yellow_button_fg)
 
+        self.end_point1 = point.Point(self.window, position=pygame.math.Vector2(0, 0), radius=5, color=color.Color().red)
+        self.end_point1.set_offset(self.start_point1.get_position())
+        self.end_point2 = point.Point(self.window, position=self.start_point2.get_position(), radius=5, color=color.Color().red)
+
         self.trajectory1 = trajectory.Trajectory(self.window)
         self.trajectory1.set_offset(self.start_point1.get_position())
         self.trajectory2 = trajectory.Trajectory(self.window)
         self.trajectory2.set_offset(self.start_point2.get_position())
 
         self.state_machine = engineStateMachine.StateMachineController()
-        self.config = engineConfigState.ConfigStateController(window=self.window, start_point1=self.start_point1, start_point2=self.start_point2, trajectory1=self.trajectory1, trajectory2=self.trajectory2)
+        self.config = engineConfigState.ConfigStateController(window=self.window, start_point1=self.start_point1, start_point2=self.start_point2, end_point1=self.end_point1, end_point2=self.end_point2, trajectory1=self.trajectory1, trajectory2=self.trajectory2)
 
     def __str__(self) -> str:
         return f'Engine({self.state_machine.current_state.name = })'

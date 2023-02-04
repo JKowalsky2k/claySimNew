@@ -1,6 +1,7 @@
 import pygame
 import json
 import numpy
+import copy
 
 import color
 
@@ -46,18 +47,20 @@ class Trajectory:
     def get_angle(self):
         return self.angle
 
+    def get_nearest_point_to_mouse_cursor(self):
+        new_position = min(list(filter(lambda point: not self.check_if_point_is_out_of_screen(point), copy.copy(self.data))), key=lambda point: numpy.sqrt((point[0]-pygame.mouse.get_pos()[0]+self.offset.x)**2+(point[1]-pygame.mouse.get_pos()[1]+self.offset.y)**2))
+        return pygame.math.Vector2(new_position[0], new_position[1])
+
     def check_if_point_is_out_of_screen(self, point):
         cartesian_point = pygame.math.Vector2(point[0], point[1]) + self.offset
         return  cartesian_point.x > pygame.display.get_surface().get_size()[0] or \
                 cartesian_point.x < 0 or \
-                cartesian_point.y < 0 or \
                 cartesian_point.y > pygame.display.get_surface().get_size()[1]-self.default_settings["hud"]["height"]
 
     def check_if_point_is_out_of_window(self, point):
         cartesian_point = pygame.math.Vector2(point[0], -point[1]) + self.offset
         return  cartesian_point.x > pygame.display.get_surface().get_size()[0] or \
                 cartesian_point.x < 0 or \
-                cartesian_point.y < 0 or \
                 cartesian_point.y > 2*pygame.display.get_surface().get_size()[1]
 
     def calculate(self):
@@ -83,7 +86,6 @@ class Trajectory:
     def draw(self):
         for idx in range(0, len(self.data), 400):
             if not self.check_if_point_is_out_of_screen(self.data[idx]):
-            # if self.data[idx][1]+self.offset.y < pygame.display.get_surface().get_size()[1]-self.default_settings["hud"]["height"]:
                 pygame.draw.circle(surface=self.window, color=self.color_manager.white, center=self.data[idx]+self.offset, radius=1)
             else:
                 break
