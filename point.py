@@ -16,17 +16,12 @@ class Point:
     
     def update_bounding_box(self):
         self.rect.center = self.position+self.offset
-
-    # def set_radius(self, new_radius):
-    #     self.radius = new_radius
-    #     self.size = pygame.math.Vector2(2*self.radius, 2*self.radius)
-    #     self.update_bounding_box()
     
     def set_position(self, new_position):
         self.position.update(new_position)
         self.update_bounding_box()
 
-    def set_default_posiiton(self):
+    def set_default_position(self):
         self.position.update(pygame.math.Vector2(0, 0))
         self.update_bounding_box()
 
@@ -46,7 +41,7 @@ class Point:
     def is_movable(self):
         return self.movable
     
-    def draw(self, draw_bbox=True):
+    def draw(self, draw_bbox=False):
         if True == draw_bbox:
             pygame.draw.rect(self.window, color.Color().blue, self.rect)
         pygame.draw.circle(self.window, self.color, self.position+self.offset, self.radius)

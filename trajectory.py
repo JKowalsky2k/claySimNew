@@ -50,6 +50,12 @@ class Trajectory:
     def get_nearest_point_to_mouse_cursor(self):
         new_position = min(list(filter(lambda point: not self.check_if_point_is_out_of_screen(point), copy.copy(self.data))), key=lambda point: numpy.sqrt((point[0]-pygame.mouse.get_pos()[0]+self.offset.x)**2+(point[1]-pygame.mouse.get_pos()[1]+self.offset.y)**2))
         return pygame.math.Vector2(new_position[0], new_position[1])
+    
+    def get_last_index(self):
+        return len(self.data)-1
+    
+    def get_point(self, index):
+        return self.data[index]
 
     def check_if_point_is_out_of_screen(self, point):
         cartesian_point = pygame.math.Vector2(point[0], point[1]) + self.offset
@@ -62,6 +68,10 @@ class Trajectory:
         return  cartesian_point.x > pygame.display.get_surface().get_size()[0] or \
                 cartesian_point.x < 0 or \
                 cartesian_point.y > 2*pygame.display.get_surface().get_size()[1]
+
+    def adjust(self, end_point_position):
+        end_point_index = [pygame.math.Vector2(point[0], point[1]) for point in self.data].index(end_point_position)
+        self.data = self.data[:end_point_index+1]
 
     def calculate(self):
         velocity = self.initial_velocity

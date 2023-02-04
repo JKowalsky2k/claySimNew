@@ -6,6 +6,7 @@ class Color():
         self.red                 = (255,   0,   0)
         self.blue                = (  0,   0, 255)
         self.green               = (  0, 255,   0)
+        self.yellow              = (255, 255,   0)
         self.brown               = (139,  69,  19)
         self.blue_button_fg      = ( 51, 153, 255)
         self.blue_button_bg      = (102, 178, 255)
