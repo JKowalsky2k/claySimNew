@@ -21,6 +21,7 @@ class DefaultElement:
         self.rect = pygame.Rect(self.position.x, self.position.y, self.size.x, self.size.y)
         self.container = container
         self.visiblity = True
+        self.is_enabled = True
 
     def set_text(self, text: str):
         self.text = self.font.render(f'{text}', True, self.color_manager.white)
@@ -45,3 +46,9 @@ class DefaultElement:
 
     def visible(self):
         self.visiblity = True
+
+    def disable(self):
+        self.is_enabled = False
+    
+    def enable(self):
+        self.is_enabled = True

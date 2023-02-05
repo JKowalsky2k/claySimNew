@@ -2,12 +2,17 @@
     "window":
     {
         "title": "-- TEST VERSION --",
-        "width": 800,
+        "width": 1000,
         "height": 600
     },
-    "hud":
+    "hud_config":
     {
         "width": 705,
         "height": 140
+    },
+    "hud_simulation":
+    {
+        "width": 905,
+        "height": 140      
     }
 }

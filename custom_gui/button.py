@@ -9,14 +9,12 @@ class Button(defaultElement.DefaultElement):
                     size=pygame.math.Vector2(100, 40), 
                     text="",
                     font_size=20,
-                    default_status=True,
                     color="blue",
                     container=container.Container(pygame.math.Vector2(0, 0))
                 ) -> None:
         super().__init__(window, position, size, text, font_size, container)
         self.foreground_color, self.background_color = self.color_manager.get_button_color_theme(color)
         self.color = self.foreground_color
-        self.is_enabled = default_status
 
     def is_clicked(self, event: pygame.event):
         return self.is_hover() and event == pygame.MOUSEBUTTONDOWN
@@ -31,17 +29,11 @@ class Button(defaultElement.DefaultElement):
                     return True
             self.color = self.foreground_color
         return False
-
-    def disable(self):
-        self.is_enabled = False
-    
-    def enable(self):
-        self.is_enabled = True
     
     def draw(self):
         if True == self.visiblity:
             if True == self.is_enabled:
                 pygame.draw.rect(surface=self.window, color=self.color, rect=self.rect, border_radius=5)
             else:
-                pygame.draw.rect(surface=self.window, color=self.color_manager.buttin_disable, rect=self.rect, border_radius=5)
+                pygame.draw.rect(surface=self.window, color=self.color_manager.disable, rect=self.rect, border_radius=5)
             self.window.blit(self.text, self.text.get_rect(center=self.rect.center))

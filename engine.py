@@ -54,6 +54,8 @@ class Engine():
         clock = pygame.time.Clock()
         self.trajectory1.calculate()
         self.trajectory2.calculate()
+        self.trajectory1.visible()
+        self.trajectory2.visible()
         while True == self.state_machine.is_config:
             self.config.display_fps_in_caption(clock=clock)
             if True == self.config.event_manager():
@@ -67,6 +69,7 @@ class Engine():
         self.trajectory1.adjust(self.end_point1.get_position())
         self.trajectory2.adjust(self.end_point2.get_position())
         self.simulation.setup_clay_position()
+        self.simulation.setup()
         while True == self.state_machine.is_simulation:
             self.config.display_fps_in_caption(clock=clock)
             if True == self.simulation.event_manager():

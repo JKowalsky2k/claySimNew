@@ -64,6 +64,7 @@ class ConfigStateController(engineDefaultState.DefaultState):
                 self.end_point2.set_default_position()
 
             if self.button_add_second_house.is_clicked(event=event.type):
+                self.start_point2.add()
                 self.button_add_second_house.invisible()
                 self.button_velocity_increase2.enable()
                 self.button_velocity_decrease2.enable()
@@ -72,6 +73,7 @@ class ConfigStateController(engineDefaultState.DefaultState):
                 self.button_remove_second_house.enable()
                 self.button_add_second_house.disable()
             elif self.button_remove_second_house.is_clicked(event=event.type):
+                self.start_point2.remove()
                 self.button_add_second_house.visible()
                 self.button_velocity_increase2.disable()
                 self.button_velocity_decrease2.disable()
@@ -146,7 +148,7 @@ class ConfigStateController(engineDefaultState.DefaultState):
             else:
                 self.local_window_width, self.local_widow_height = self.default_settings["window"]["width"], self.default_settings["window"]["height"]
                 self.window = pygame.display.set_mode(size=(self.local_window_width, self.local_widow_height), flags=pygame.RESIZABLE)
-            self.container.set_position(pygame.math.Vector2(self.local_window_width/2-self.default_settings["hud"]["width"]/2, self.local_widow_height-self.default_settings["hud"]["height"]))
+            self.container.set_position(pygame.math.Vector2(self.local_window_width/2-self.default_settings["hud_config"]["width"]/2, self.local_widow_height-self.default_settings["hud_config"]["height"]))
         if True == self.trajectory1.check_if_point_is_out_of_screen(self.end_point1.get_position()):
             self.end_point1.set_default_posiiton()
         if True == self.trajectory2.check_if_point_is_out_of_screen(self.end_point2.get_position()):
@@ -155,7 +157,7 @@ class ConfigStateController(engineDefaultState.DefaultState):
     def create_gui(self):
         self.controls = []
 
-        self.container = container.Container(pygame.math.Vector2(self.local_window_width/2-self.default_settings["hud"]["width"]/2, self.local_widow_height-self.default_settings["hud"]["height"]))
+        self.container = container.Container(pygame.math.Vector2(self.local_window_width/2-self.default_settings["hud_config"]["width"]/2, self.local_widow_height-self.default_settings["hud_config"]["height"]))
 
         self.label_velocity_name1 = label.Label(self.window, position=pygame.math.Vector2(0, 0), text="Velocity", font_size=18, container=self.container)
         self.controls.append(self.label_velocity_name1)
@@ -228,7 +230,7 @@ class ConfigStateController(engineDefaultState.DefaultState):
             object.set_position_x(new_x=pygame.mouse.get_pos()[0])
         if pygame.mouse.get_pos()[1] < object.get_rect().height//2:
             object.set_position_y(new_y=object.get_rect().height//2)
-        elif pygame.mouse.get_pos()[1] > self.local_widow_height-self.default_settings["hud"]["height"]-object.get_rect().height//2:
-            object.set_position_y(new_y=self.local_widow_height-self.default_settings["hud"]["height"]-object.get_rect().height//2)
+        elif pygame.mouse.get_pos()[1] > self.local_widow_height-self.default_settings["hud_config"]["height"]-object.get_rect().height//2:
+            object.set_position_y(new_y=self.local_widow_height-self.default_settings["hud_config"]["height"]-object.get_rect().height//2)
         else:
             object.set_position_y(new_y= pygame.mouse.get_pos()[1])
