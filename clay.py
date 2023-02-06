@@ -7,11 +7,12 @@ import color
 class Clay(pygame.sprite.Sprite):
     def __init__(self, window, offset, radius) -> None:
         pygame.sprite.Sprite.__init__(self)
+        with open('settings/simulation_settings.json') as simulation_settings_file:
+            self.simulation_settings = json.load(simulation_settings_file)
+
         self.window = window
         self.radius = radius
         self.offset = offset
-        with open('simulation_settings.json') as simulation_settings_file:
-            self.simulation_settings = json.load(simulation_settings_file)
         self.color_manager = color.Color()
         self.reference_sprite = pygame.image.load("clay.png").convert_alpha()
         self.sprite = copy.copy(self.reference_sprite)

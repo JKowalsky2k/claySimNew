@@ -1,19 +1,19 @@
 import pygame
 import json
 
-import engineStateMachine
-import engineConfigState
-import engineSimulationState
+import engine.engineStateMachine as engineStateMachine
+import engine.engineConfigState as engineConfigState
+import engine.engineSimulationState as engineSimulationState
 import color
 import house
 import point
 import trajectory
+import background
 
 class Engine():
     def __init__(self) -> None:
         pygame.init()
-
-        with open('default_settings.json') as default_settings_file:
+        with open('settings/default_settings.json') as default_settings_file:
             self.settings = json.load(default_settings_file)
 
         self.window = pygame.display.set_mode(size=(self.settings["window"]["width"], self.settings["window"]["height"]), flags=pygame.RESIZABLE)
@@ -32,9 +32,11 @@ class Engine():
         self.trajectory2 = trajectory.Trajectory(self.window)
         self.trajectory2.set_offset(self.start_point2.get_position())
 
+        self.background = background.Background(self.window)
+
         self.state_machine = engineStateMachine.StateMachineController()
-        self.config = engineConfigState.ConfigStateController(window=self.window, start_point1=self.start_point1, start_point2=self.start_point2, end_point1=self.end_point1, end_point2=self.end_point2, trajectory1=self.trajectory1, trajectory2=self.trajectory2)
-        self.simulation = engineSimulationState.SimulationStateController(window=self.window, start_point1=self.start_point1, start_point2=self.start_point2, end_point1=self.end_point1, end_point2=self.end_point2, trajectory1=self.trajectory1, trajectory2=self.trajectory2)
+        self.config = engineConfigState.ConfigStateController(window=self.window, start_point1=self.start_point1, start_point2=self.start_point2, end_point1=self.end_point1, end_point2=self.end_point2, trajectory1=self.trajectory1, trajectory2=self.trajectory2, background=self.background)
+        self.simulation = engineSimulationState.SimulationStateController(window=self.window, start_point1=self.start_point1, start_point2=self.start_point2, end_point1=self.end_point1, end_point2=self.end_point2, trajectory1=self.trajectory1, trajectory2=self.trajectory2, background=self.background)
 
     def __str__(self) -> str:
         return f'Engine({self.state_machine.current_state.name = })'

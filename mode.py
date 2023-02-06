@@ -1,4 +1,4 @@
-class ModeController:
+class Mode:
     def __init__(self, is_second_house_added=False) -> None:
         self.modes = ("Single Blue", "Single Yellow", "On Rep Blue", "On Rep Yellow", "Simult")
         if False == is_second_house_added:

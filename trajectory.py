@@ -7,6 +7,11 @@ import color
 
 class Trajectory:
     def __init__(self, window) -> None:
+        with open('settings/default_settings.json') as default_settings_file:
+            self.default_settings = json.load(default_settings_file)
+        with open('settings/trajectory_settings.json') as trajectory_settings_file:
+            self.trajectory_settings = json.load(trajectory_settings_file)
+
         self.window = window
         self.color_manager = color.Color()
         self.data = []
@@ -17,11 +22,6 @@ class Trajectory:
         self.delta_time = 1e-3
         self.gravity = 9.807
         self.visibility = True
-
-        with open('default_settings.json') as default_settings_file:
-            self.default_settings = json.load(default_settings_file)
-        with open('trajectory_settings.json') as trajectory_settings_file:
-            self.trajectory_settings = json.load(trajectory_settings_file)
 
     def set_offset(self, new_offset):
         self.offset.update(new_offset)
