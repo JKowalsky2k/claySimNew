@@ -150,9 +150,9 @@ class ConfigStateController(engineDefaultState.DefaultState):
                 self.window = pygame.display.set_mode(size=(self.local_window_width, self.local_widow_height), flags=pygame.RESIZABLE)
             self.container.set_position(pygame.math.Vector2(self.local_window_width/2-self.default_settings["hud_config"]["width"]/2, self.local_widow_height-self.default_settings["hud_config"]["height"]))
         if True == self.trajectory1.check_if_point_is_out_of_screen(self.end_point1.get_position()):
-            self.end_point1.set_default_posiiton()
+            self.end_point1.set_default_position()
         if True == self.trajectory2.check_if_point_is_out_of_screen(self.end_point2.get_position()):
-            self.end_point2.set_default_posiiton()
+            self.end_point2.set_default_position()
 
     def create_gui(self):
         self.controls = []

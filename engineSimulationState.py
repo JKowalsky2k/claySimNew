@@ -137,6 +137,7 @@ class SimulationStateController(engineDefaultState.DefaultState):
         pygame.display.flip()
 
     def update(self, delta_time):
+        print(f"{delta_time = }")
         if pygame.display.get_surface().get_size()[0] >= self.default_settings["window"]["width"] and pygame.display.get_surface().get_size()[1] >= self.default_settings["window"]["height"]:
             self.local_window_width, self.local_widow_height = pygame.display.get_surface().get_size()
         else:
