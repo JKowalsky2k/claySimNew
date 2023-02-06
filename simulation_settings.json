@@ -1,12 +1,14 @@
 {
     "speed":
     {
+        "default": 5,
         "max": 20,
         "min": 0,
         "step": 1
     },
     "size":
     {
+        "default": 10,
         "max": 20,
         "min": 1,
         "step": 1

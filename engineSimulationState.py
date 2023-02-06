@@ -6,6 +6,7 @@ import custom_gui.container as container
 import custom_gui.button as button
 import custom_gui.label as label
 import clay
+import modeController
 
 class SimulationStateController(engineDefaultState.DefaultState):
     def __init__(self, window, start_point1, start_point2, end_point1, end_point2, trajectory1, trajectory2) -> None:
@@ -15,23 +16,15 @@ class SimulationStateController(engineDefaultState.DefaultState):
         with open('simulation_settings.json') as simulation_settings_file:
             self.simulation_settings = json.load(simulation_settings_file)
         self.local_window_width, self.local_widow_height = pygame.display.get_surface().get_size()
-        self.clay1 = clay.Clay(self.window, self.start_point1.get_position(), 10)
-        self.clay2 = clay.Clay(self.window, self.start_point2.get_position(), 10)
+        self.clay1 = clay.Clay(self.window, self.start_point1.get_position(), self.simulation_settings["size"]["default"])
+        self.clay2 = clay.Clay(self.window, self.start_point2.get_position(), self.simulation_settings["size"]["default"])
         self.current_index1,  self.current_index2 = 0, 0
-        self.simulation_speed1, self.simulation_speed2 = 5, 5
+        self.simulation_speed1, self.simulation_speed2 = self.simulation_settings["speed"]["default"], self.simulation_settings["speed"]["default"]
         self.setup()
         self.create_gui()
 
     def setup(self):
-        if True == self.start_point2.is_added():
-            self.modes = {0: "Single Blue", 1: "Single Yellow", 2: "On Rep Blue", 3: "On Rep Yellow", 4: "Simult"}
-        else:
-            self.modes = {0: "Single Blue"}
-        self.mode_index = 0
-        self.current_mode = self.modes[self.mode_index]
-        self.run_blue = False
-        self.run_yellow = False
-        self.space_click_counter = 0
+        self.mode_controller = modeController.ModeController(self.start_point2.is_added())
     
     def event_manager(self):
         for event in pygame.event.get():
@@ -41,30 +34,7 @@ class SimulationStateController(engineDefaultState.DefaultState):
                 if event.key == pygame.K_SPACE:
                     self.label_mode_name.disable()
                     self.button_mode.disable()
-                    if self.current_mode == "Single Blue":
-                        self.run_blue = True
-                        self.run_yellow = False
-                    elif self.current_mode == "Single Yellow":
-                        self.run_blue = False
-                        self.run_yellow = True
-                    elif self.current_mode == "On Rep Blue":
-                        if 0 ==self.space_click_counter:
-                            self.run_blue = True
-                            self.space_click_counter = 1
-                        else:
-                            self.run_yellow = True
-                            self.space_click_counter = 0
-                    elif self.current_mode == "On Rep Yellow":
-                        if 0 ==self.space_click_counter:
-                            self.run_yellow = True
-                            self.space_click_counter = 1
-                        else:
-                            self.run_blue = True
-                            self.space_click_counter = 0                        
-                    elif self.current_mode == "Simult":
-                        self.run_blue = True
-                        self.run_yellow = True
-                        
+                    self.mode_controller.run()                        
             if self.button_speed_increase1.is_clicked(event=event.type):
                 self.simulation_speed1 = self.increase_speed(self.simulation_speed1)
                 self.label_speed_value1.set_text(f'{self.simulation_speed1}')
@@ -100,12 +70,9 @@ class SimulationStateController(engineDefaultState.DefaultState):
                     self.trajectory2.visible()
                     self.button_trajectory_visibility.set_text("Disable")
             if self.button_mode.is_clicked(event=event.type):
-                if self.mode_index < len(self.modes.items())-1:
-                    self.mode_index += 1
-                else:
-                    self.mode_index = 0
-                self.current_mode = self.modes[self.mode_index]
-                self.button_mode.set_text(f"{self.current_mode}")
+                self.mode_controller.change_mode()
+                print(f"{self.mode_controller.get_mode() = }")
+                self.button_mode.set_text(f"{self.mode_controller.get_mode()}")
             if self.button_background_next.is_clicked(event=event.type):
                 print("Background Next")
             if self.button_background_previous.is_clicked(event=event.type):
@@ -137,7 +104,6 @@ class SimulationStateController(engineDefaultState.DefaultState):
         pygame.display.flip()
 
     def update(self, delta_time):
-        print(f"{delta_time = }")
         if pygame.display.get_surface().get_size()[0] >= self.default_settings["window"]["width"] and pygame.display.get_surface().get_size()[1] >= self.default_settings["window"]["height"]:
             self.local_window_width, self.local_widow_height = pygame.display.get_surface().get_size()
         else:
@@ -164,27 +130,28 @@ class SimulationStateController(engineDefaultState.DefaultState):
             self.button_size_increase2.enable()
             self.button_size_decrease2.enable()
 
-        if True == self.run_blue:
+        if True == self.mode_controller.is_first_running():
             if delta_time < 1:
                 self.current_index1 += self.simulation_speed1
             else:
                 self.current_index1 += self.simulation_speed1*delta_time
             if self.current_index1 > self.trajectory1.get_last_index():
                 self.current_index1 = 0
-                self.run_blue = False
+                self.mode_controller.stop_first()
             self.clay1.set_position(self.trajectory1.get_point(self.current_index1))
 
-        if True == self.run_yellow:
+        if True == self.mode_controller.is_second_running():
             if delta_time < 1:
                 self.current_index2 += self.simulation_speed2
             else:
                 self.current_index2 += self.simulation_speed2*delta_time
             if self.current_index2 > self.trajectory2.get_last_index():
                 self.current_index2 = 0
-                self.run_yellow = False
+                self.mode_controller.stop_second()
             self.clay2.set_position(self.trajectory2.get_point(self.current_index2))
         
-        if False == self.run_blue and False == self.run_yellow:
+        if  False == self.mode_controller.is_first_running() and \
+            False == self.mode_controller.is_second_running():
             self.label_mode_name.enable()
             self.button_mode.enable()
 
@@ -235,7 +202,7 @@ class SimulationStateController(engineDefaultState.DefaultState):
         self.controls.append(self.button_trajectory_visibility)
         self.label_mode_name = label.Label(self.window, position=pygame.math.Vector2(550, 0), text="Mode", color="green", font_size=18, container=self.container)
         self.controls.append(self.label_mode_name)
-        self.button_mode = button.Button(self.window, position=pygame.math.Vector2(550, 50), size=pygame.math.Vector2(100, 80), text=f"{self.current_mode}", color="green", container=self.container)
+        self.button_mode = button.Button(self.window, position=pygame.math.Vector2(550, 50), size=pygame.math.Vector2(100, 80), text=f"{self.mode_controller.get_mode()}", color="green", container=self.container)
         self.controls.append(self.button_mode)
 
         self.label_background_name = label.Label(self.window, position=pygame.math.Vector2(660, 0), text="Background", color="green", font_size=18, container=self.container)
