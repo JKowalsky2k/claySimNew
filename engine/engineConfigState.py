@@ -20,7 +20,7 @@ class ConfigStateController(engineDefaultState.DefaultState):
     def event_manager(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                exit(0)
+                pygame.quit()
             if self.button_velocity_increase1.is_clicked(event=event.type):
                 self.trajectory1.increase_initial_velocity()
                 self.label_velocity_value1.set_text(self.trajectory1.get_initial_velocity())
@@ -121,7 +121,6 @@ class ConfigStateController(engineDefaultState.DefaultState):
                     self.end_point2.set_offset(self.start_point2.get_position())  
 
     def draw(self):
-
         self.window.fill(self.color.black)
         self.background.draw()
         

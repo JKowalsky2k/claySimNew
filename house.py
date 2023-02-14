@@ -8,7 +8,7 @@ class House:
         self.size = size
         self.color = color
         self.movable = False
-        self.add_staus = False
+        self.add_status = False
         self.update_rect()
 
     def update_rect(self):
@@ -35,13 +35,13 @@ class House:
         self.movable = state
     
     def add(self):
-        self.add_staus = True
+        self.add_status = True
     
     def remove(self):
-        self.add_staus = False
+        self.add_status = False
     
     def is_added(self):
-        return self.add_staus
+        return self.add_status
 
     def is_movable(self):
         return self.movable

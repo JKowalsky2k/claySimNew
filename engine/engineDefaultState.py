@@ -12,6 +12,7 @@ class DefaultState():
         self.trajectory1 = trajectory1
         self.trajectory2 = trajectory2
         self.background = background
+        self.controls = list()
 
     def update(self):
         print("update")
@@ -21,6 +22,9 @@ class DefaultState():
 
     def event_manager(self):
         print("event_manager")
+
+    def destroy_all_controls(self):
+        self.controls.clear()
 
     def display_fps_in_caption(self, clock):
         pygame.display.set_caption(f'{round(clock.get_fps(), 2)}')

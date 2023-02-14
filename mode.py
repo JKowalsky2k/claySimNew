@@ -6,6 +6,7 @@ class Mode:
         self.index = 0
         self.space_press_counter = 1
         self.run_first, self.run_second = False, False
+        self.is_locked = False
 
     def change_mode(self):
         if self.index < len(self.modes)-1:
@@ -17,29 +18,31 @@ class Mode:
         return self.modes[self.index]
     
     def run(self):
-        if self.index == 0:
-            self.start_first()
-            self.stop_second()
-        elif self.index == 1:
-            self.stop_first()
-            self.start_second()
-        elif self.index == 2:
-            if 1 == self.space_press_counter:
+        if False == self.is_locked:
+            if self.index == 0:
                 self.start_first()
-                self.space_press_counter = 2
-            else:
+                self.stop_second()
+            elif self.index == 1:
+                self.stop_first()
                 self.start_second()
-                self.space_press_counter = 1
-        elif self.index == 3:
-            if 1 == self.space_press_counter:
-                self.start_second()
-                self.space_press_counter = 2
-            else:
+            elif self.index == 2:
+                if 1 == self.space_press_counter:
+                    self.start_first()
+                    self.space_press_counter = 2
+                else:
+                    self.start_second()
+                    self.space_press_counter = 1
+            elif self.index == 3:
+                if 1 == self.space_press_counter:
+                    self.start_second()
+                    self.space_press_counter = 2
+                else:
+                    self.start_first()
+                    self.space_press_counter = 1
+            elif self.index == 4:
                 self.start_first()
-                self.space_press_counter = 1
-        elif self.index == 4:
-            self.start_first()
-            self.start_second()
+                self.start_second()
+            self.lock()
 
     def start_first(self):
         self.run_first = True
@@ -58,3 +61,9 @@ class Mode:
 
     def is_second_running(self):
         return self.run_second
+
+    def lock(self):
+        self.is_locked = True
+
+    def unlock(self):
+        self.is_locked = False

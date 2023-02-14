@@ -22,15 +22,15 @@ class SimulationStateController(engineDefaultState.DefaultState):
         self.current_index1,  self.current_index2 = 0, 0
         self.simulation_speed1, self.simulation_speed2 = self.simulation_settings["speed"]["default"], self.simulation_settings["speed"]["default"]
         self.setup()
-        self.create_gui()
 
     def setup(self):
         self.mode_controller = mode.Mode(self.start_point2.is_added())
+        self.create_gui()
     
     def event_manager(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                exit(0)
+                pygame.quit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.label_mode_name.disable()
@@ -80,6 +80,7 @@ class SimulationStateController(engineDefaultState.DefaultState):
                 self.background.previous()
                 self.label_background_value.set_text(f"{self.background.get_id()}")
             if self.button_start.is_clicked(event=event.type):
+                self.destroy_all_controls()
                 return True
     
     def draw(self):
@@ -155,6 +156,7 @@ class SimulationStateController(engineDefaultState.DefaultState):
         
         if  False == self.mode_controller.is_first_running() and \
             False == self.mode_controller.is_second_running():
+            self.mode_controller.unlock()
             self.label_mode_name.enable()
             self.button_mode.enable()
 
