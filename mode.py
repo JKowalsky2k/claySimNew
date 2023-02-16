@@ -5,6 +5,8 @@ class Mode:
             self.modes = ("Single Blue",)
         self.index = 0
         self.space_press_counter = 1
+        self.space_states = {"first_ready": 1, "second_ready": 2, "finished": 3}
+        self.current_space_press_state = self.space_states["first_ready"]
         self.run_first, self.run_second = False, False
         self.is_locked = False
 
@@ -26,19 +28,19 @@ class Mode:
                 self.stop_first()
                 self.start_second()
             elif self.index == 2:
-                if 1 == self.space_press_counter:
+                if self.space_states["first_ready"] == self.current_space_press_state:
                     self.start_first()
-                    self.space_press_counter = 2
-                elif 2 == self.space_press_counter:
+                    self.current_space_press_state = self.space_states["second_ready"]
+                elif self.space_states["second_ready"] == self.current_space_press_state:
                     self.start_second()
-                    self.space_press_counter = 3
+                    self.current_space_press_state = self.space_states["finished"]
             elif self.index == 3:
-                if 1 == self.space_press_counter:
+                if self.space_states["first_ready"] == self.current_space_press_state:
                     self.start_second()
-                    self.space_press_counter = 2
-                elif 2 == self.space_press_counter:
+                    self.current_space_press_state = 2
+                elif self.space_states["second_ready"] == self.current_space_press_state:
                     self.start_first()
-                    self.space_press_counter = 3
+                    self.current_space_press_state = self.space_states["finished"]
             elif self.index == 4:
                 self.lock()
                 self.start_first()
@@ -66,6 +68,6 @@ class Mode:
         self.is_locked = True
 
     def unlock(self):
-        if 3 == self.space_press_counter:
-            self.space_press_counter = 1
+        if self.space_states["finished"] == self.current_space_press_state:
+            self.current_space_press_state = self.space_states["first_ready"]
         self.is_locked = False
