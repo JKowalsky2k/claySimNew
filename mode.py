@@ -37,7 +37,7 @@ class Mode:
             elif self.index == 3:
                 if self.space_states["first_ready"] == self.current_space_press_state:
                     self.start_second()
-                    self.current_space_press_state = 2
+                    self.current_space_press_state = self.space_states["second_ready"]
                 elif self.space_states["second_ready"] == self.current_space_press_state:
                     self.start_first()
                     self.current_space_press_state = self.space_states["finished"]
