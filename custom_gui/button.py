@@ -10,18 +10,22 @@ class Button(defaultElement.DefaultElement):
                     text="",
                     font_size=20,
                     color="blue",
-                    container=container.Container(pygame.math.Vector2(0, 0))
+                    container=None
                 ) -> None:
         super().__init__(window, position, size, text, font_size, container)
         self.foreground_color, self.background_color = self.color_manager.get_button_color_theme(color)
         self.color = self.foreground_color
+        self.is_clicked = False
 
-    def is_clicked(self, event: pygame.event):
-        return self.is_hover() and event == pygame.MOUSEBUTTONDOWN
+    def check_if_clicked(self, event: pygame.event):
+        click_status = self.check_if_hovered() and event == pygame.MOUSEBUTTONDOWN
+        if True == click_status:
+            self.is_clicked =  (self.is_clicked + 1) % 2
+        return click_status
 
-    def is_hover(self):
-        if True == self.visiblity:
-            if True == self.is_enabled:
+    def check_if_hovered(self):
+        if True == self.check_if_visible():
+            if True == self.check_if_enabled():
                 mouse_posx, mouse_posy = pygame.mouse.get_pos()
                 if  self.position.x < mouse_posx < self.position.x + self.size.x and \
                     self.position.y < mouse_posy < self.position.y + self.size.y:
@@ -30,9 +34,12 @@ class Button(defaultElement.DefaultElement):
             self.color = self.foreground_color
         return False
     
+    def check_status(self):
+        return self.is_clicked
+    
     def draw(self):
-        if True == self.visiblity:
-            if True == self.is_enabled:
+        if True == self.check_if_visible():
+            if True == self.check_if_enabled():
                 pygame.draw.rect(surface=self.window, color=self.color, rect=self.rect, border_radius=5)
             else:
                 pygame.draw.rect(surface=self.window, color=self.color_manager.disable, rect=self.rect, border_radius=5)

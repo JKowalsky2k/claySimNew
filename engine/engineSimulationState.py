@@ -9,8 +9,8 @@ import clay
 import mode
 
 class SimulationStateController(engineDefaultState.DefaultState):
-    def __init__(self, window, start_point1, start_point2, end_point1, end_point2, trajectory1, trajectory2, background) -> None:
-        super().__init__(window, start_point1, start_point2, end_point1, end_point2, trajectory1, trajectory2, background)
+    def __init__(self, window, start_point1, start_point2, end_point1, end_point2, trajectory1, trajectory2, background, button_hide_hud) -> None:
+        super().__init__(window, start_point1, start_point2, end_point1, end_point2, trajectory1, trajectory2, background, button_hide_hud)
         with open('settings/default_settings.json') as default_settings_file:
             self.default_settings = json.load(default_settings_file)
         with open('settings/simulation_settings.json') as simulation_settings_file:
@@ -22,66 +22,73 @@ class SimulationStateController(engineDefaultState.DefaultState):
         self.current_index1,  self.current_index2 = 0, 0
         self.simulation_speed1, self.simulation_speed2 = self.simulation_settings["speed"]["default"], self.simulation_settings["speed"]["default"]
         self.setup()
+        self.create_gui()
 
     def setup(self):
         self.mode_controller = mode.Mode(self.start_point2.is_added())
-        self.create_gui()
+        self.current_index1,  self.current_index2 = 0, 0
     
     def event_manager(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
+                exit()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    self.label_mode_name.disable()
-                    self.button_mode.disable()
+                    self.label_mode_name.set_disable()
+                    self.button_mode.set_disable()
                     self.mode_controller.run()                        
-            if self.button_speed_increase1.is_clicked(event=event.type):
+            if self.button_speed_increase1.check_if_clicked(event=event.type):
                 self.simulation_speed1 = self.increase_speed(self.simulation_speed1)
                 self.label_speed_value1.set_text(f'{self.simulation_speed1}')
-            if self.button_speed_decrease1.is_clicked(event=event.type):
+            if self.button_speed_decrease1.check_if_clicked(event=event.type):
                 self.simulation_speed1 = self.decrease_speed(self.simulation_speed1)
                 self.label_speed_value1.set_text(f'{self.simulation_speed1}')
-            if self.button_size_increase1.is_clicked(event=event.type):
+            if self.button_size_increase1.check_if_clicked(event=event.type):
                 self.clay1.increase_radius()
                 self.label_size_value1.set_text(f'{self.clay1.get_radius()}')
-            if self.button_size_decrease1.is_clicked(event=event.type):
+            if self.button_size_decrease1.check_if_clicked(event=event.type):
                 self.clay1.decrease_radius()
                 self.label_size_value1.set_text(f'{self.clay1.get_radius()}')
             if True == self.start_point2.is_added():
-                if self.button_speed_increase2.is_clicked(event=event.type):
+                if self.button_speed_increase2.check_if_clicked(event=event.type):
                     self.simulation_speed2 = self.increase_speed(self.simulation_speed2)
                     self.label_speed_value2.set_text(f'{self.simulation_speed2}')
-                if self.button_speed_decrease2.is_clicked(event=event.type):
+                if self.button_speed_decrease2.check_if_clicked(event=event.type):
                     self.simulation_speed2 = self.decrease_speed(self.simulation_speed2)
                     self.label_speed_value2.set_text(f'{self.simulation_speed2}')
-                if self.button_size_increase2.is_clicked(event=event.type):
+                if self.button_size_increase2.check_if_clicked(event=event.type):
                     self.clay2.increase_radius()
                     self.label_size_value2.set_text(f'{self.clay2.get_radius()}')
-                if self.button_size_decrease2.is_clicked(event=event.type):
+                if self.button_size_decrease2.check_if_clicked(event=event.type):
                     self.clay2.decrease_radius()
                     self.label_size_value2.set_text(f'{self.clay2.get_radius()}')
-            if self.button_trajectory_visibility.is_clicked(event=event.type):
-                if True == self.trajectory1.is_visible():
-                    self.trajectory1.invisible()
-                    self.trajectory2.invisible()
+            if self.button_trajectory_visibility.check_if_clicked(event=event.type):
+                if True == self.trajectory1.check_if_visible():
+                    self.trajectory1.set_invisible()
+                    self.trajectory2.set_invisible()
                     self.button_trajectory_visibility.set_text("Enable")
                 else:
-                    self.trajectory1.visible()
-                    self.trajectory2.visible()
+                    self.trajectory1.set_visible()
+                    self.trajectory2.set_visible()
                     self.button_trajectory_visibility.set_text("Disable")
-            if self.button_mode.is_clicked(event=event.type):
+            if self.button_mode.check_if_clicked(event=event.type):
                 self.mode_controller.change_mode()
                 self.button_mode.set_text(f"{self.mode_controller.get_mode()}")
-            if self.button_background_next.is_clicked(event=event.type):
+            if self.button_background_next.check_if_clicked(event=event.type):
                 self.background.next()
                 self.label_background_value.set_text(f"{self.background.get_id()}")
-            if self.button_background_previous.is_clicked(event=event.type):
+            if self.button_background_previous.check_if_clicked(event=event.type):
                 self.background.previous()
                 self.label_background_value.set_text(f"{self.background.get_id()}")
-            if self.button_start.is_clicked(event=event.type):
-                self.destroy_all_controls()
+            if self.button_start.check_if_clicked(event=event.type):
                 return True
+            if self.button_hide_hud.check_if_clicked(event=event.type):
+                if "Hide" == self.button_hide_hud.get_text():
+                    self.hide_controls()
+                    self.button_hide_hud.set_text("Show")
+                elif "Show" == self.button_hide_hud.get_text():
+                    self.show_controls()
+                    self.button_hide_hud.set_text("Hide")
     
     def draw(self):
         self.window.fill(self.color.black)
@@ -98,41 +105,45 @@ class SimulationStateController(engineDefaultState.DefaultState):
             self.end_point2.draw()
             self.clay2.draw()
 
-        if True == self.container.check_update():
-            for control in self.controls:
-                control.update_position()
-            self.container.update_finished()
+        self.container.draw()
         for control in self.controls:
             control.draw()
+        self.button_hide_hud.draw()
 
         pygame.display.flip()
 
     def update(self, delta_time):
+        if True == self.container.check_update():
+            for control in self.controls:
+                control.update_position()
+            self.container.update_finished()
+
         if pygame.display.get_surface().get_size()[0] >= self.default_settings["window"]["width"] and pygame.display.get_surface().get_size()[1] >= self.default_settings["window"]["height"]:
             self.local_window_width, self.local_widow_height = pygame.display.get_surface().get_size()
         else:
             self.local_window_width, self.local_widow_height = self.default_settings["window"]["width"], self.default_settings["window"]["height"]
             self.window = pygame.display.set_mode(size=(self.local_window_width, self.local_widow_height), flags=pygame.RESIZABLE)
         self.container.set_position(pygame.math.Vector2(self.local_window_width/2-self.default_settings["hud_simulation"]["width"]/2, self.local_widow_height-self.default_settings["hud_simulation"]["height"]))
+        self.button_hide_hud.set_absolute_position(pygame.math.Vector2(5, pygame.display.get_surface().get_size()[1]-30))
 
         if False == self.start_point2.is_added():
-            self.label_speed_name2.disable()
-            self.label_speed_value2.disable()
-            self.button_speed_increase2.disable()
-            self.button_speed_decrease2.disable()
-            self.label_size_name2.disable()
-            self.label_size_value2.disable()
-            self.button_size_increase2.disable()
-            self.button_size_decrease2.disable()
+            self.label_speed_name2.set_disable()
+            self.label_speed_value2.set_disable()
+            self.button_speed_increase2.set_disable()
+            self.button_speed_decrease2.set_disable()
+            self.label_size_name2.set_disable()
+            self.label_size_value2.set_disable()
+            self.button_size_increase2.set_disable()
+            self.button_size_decrease2.set_disable()
         else:
-            self.label_speed_name2.enable()
-            self.label_speed_value2.enable()
-            self.button_speed_increase2.enable()
-            self.button_speed_decrease2.enable()
-            self.label_size_name2.enable()
-            self.label_size_value2.enable()
-            self.button_size_increase2.enable()
-            self.button_size_decrease2.enable()
+            self.label_speed_name2.set_enable()
+            self.label_speed_value2.set_enable()
+            self.button_speed_increase2.set_enable()
+            self.button_speed_decrease2.set_enable()
+            self.label_size_name2.set_enable()
+            self.label_size_value2.set_enable()
+            self.button_size_increase2.set_enable()
+            self.button_size_decrease2.set_enable()
 
         if True == self.mode_controller.is_first_running():
             if delta_time < 1:
@@ -157,13 +168,15 @@ class SimulationStateController(engineDefaultState.DefaultState):
         if  False == self.mode_controller.is_first_running() and \
             False == self.mode_controller.is_second_running():
             self.mode_controller.unlock()
-            self.label_mode_name.enable()
-            self.button_mode.enable()
+            self.label_mode_name.set_enable()
+            self.button_mode.set_enable()
 
     def create_gui(self):
         self.controls = []
 
-        self.container = container.Container(pygame.math.Vector2(self.local_window_width/2-self.default_settings["hud_simulation"]["width"]/2, self.local_widow_height-self.default_settings["hud_simulation"]["height"]))
+        self.container = container.Container(   self.window,
+                                                pygame.math.Vector2(self.local_window_width/2-self.default_settings["hud_simulation"]["width"]/2, self.local_widow_height-self.default_settings["hud_simulation"]["height"]),
+                                                pygame.math.Vector2(self.default_settings["hud_simulation"]["width"], self.default_settings["hud_simulation"]["height"]))           
 
         self.label_speed_name1 = label.Label(self.window, position=pygame.math.Vector2(0, 5), text="Speed", color="blue", font_size=18, container=self.container)
         self.controls.append(self.label_speed_name1)

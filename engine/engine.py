@@ -4,6 +4,8 @@ import json
 import engine.engineStateMachine as engineStateMachine
 import engine.engineConfigState as engineConfigState
 import engine.engineSimulationState as engineSimulationState
+
+import custom_gui.button as button
 import color
 import house
 import point
@@ -33,10 +35,11 @@ class Engine():
         self.trajectory2.set_offset(self.start_point2.get_position())
 
         self.background = background.Background(self.window)
+        self.button_hide_hud = button.Button(self.window, position=pygame.math.Vector2(5, pygame.display.get_surface().get_size()[1]-30), size=pygame.math.Vector2(50, 25), text="Hide", font_size=18, color="purple")
 
         self.state_machine = engineStateMachine.StateMachineController()
-        self.config = engineConfigState.ConfigStateController(window=self.window, start_point1=self.start_point1, start_point2=self.start_point2, end_point1=self.end_point1, end_point2=self.end_point2, trajectory1=self.trajectory1, trajectory2=self.trajectory2, background=self.background)
-        self.simulation = engineSimulationState.SimulationStateController(window=self.window, start_point1=self.start_point1, start_point2=self.start_point2, end_point1=self.end_point1, end_point2=self.end_point2, trajectory1=self.trajectory1, trajectory2=self.trajectory2, background=self.background)
+        self.config = engineConfigState.ConfigStateController(window=self.window, start_point1=self.start_point1, start_point2=self.start_point2, end_point1=self.end_point1, end_point2=self.end_point2, trajectory1=self.trajectory1, trajectory2=self.trajectory2, background=self.background, button_hide_hud=self.button_hide_hud)
+        self.simulation = engineSimulationState.SimulationStateController(window=self.window, start_point1=self.start_point1, start_point2=self.start_point2, end_point1=self.end_point1, end_point2=self.end_point2, trajectory1=self.trajectory1, trajectory2=self.trajectory2, background=self.background, button_hide_hud=self.button_hide_hud)
 
     def __str__(self) -> str:
         return f'Engine({self.state_machine.current_state.name = })'
@@ -56,8 +59,8 @@ class Engine():
         clock = pygame.time.Clock()
         self.trajectory1.calculate()
         self.trajectory2.calculate()
-        self.trajectory1.visible()
-        self.trajectory2.visible()
+        self.trajectory1.set_visible()
+        self.trajectory2.set_visible()
         while True == self.state_machine.is_config:
             self.config.display_fps_in_caption(clock=clock)
             if True == self.config.event_manager():

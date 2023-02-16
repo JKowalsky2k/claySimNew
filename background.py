@@ -32,4 +32,4 @@ class Background:
             self.index = len(self.backgorunds)-1
     
     def draw(self):
-        self.window.blit(pygame.transform.scale(self.backgorunds[self.index], (pygame.display.get_surface().get_size()[0], pygame.display.get_surface().get_size()[1]-self.default_settings["hud_config"]["height"])), (0, 0))
+        self.window.blit(pygame.transform.scale(self.backgorunds[self.index], (pygame.display.get_surface().get_size()[0], pygame.display.get_surface().get_size()[1])), (0, 0))

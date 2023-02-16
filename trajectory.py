@@ -7,8 +7,6 @@ import color
 
 class Trajectory:
     def __init__(self, window) -> None:
-        with open('settings/default_settings.json') as default_settings_file:
-            self.default_settings = json.load(default_settings_file)
         with open('settings/trajectory_settings.json') as trajectory_settings_file:
             self.trajectory_settings = json.load(trajectory_settings_file)
 
@@ -21,19 +19,19 @@ class Trajectory:
         self.offset = pygame.math.Vector2(0, 0)
         self.delta_time = 1e-3
         self.gravity = 9.807
-        self.visibility = True
+        self.is_visible = True
 
     def set_offset(self, new_offset):
         self.offset.update(new_offset)
     
-    def visible(self):
-        self.visibility = True
+    def set_visible(self):
+        self.is_visible = True
 
-    def invisible(self):
-        self.visibility = False
+    def set_invisible(self):
+        self.is_visible = False
 
-    def is_visible(self):
-        return self.visibility
+    def check_if_visible(self):
+        return self.is_visible
 
     def increase_initial_velocity(self):
         if self.initial_velocity < self.trajectory_settings["velocity"]["max"]:
@@ -71,13 +69,13 @@ class Trajectory:
         cartesian_point = pygame.math.Vector2(point[0], point[1]) + self.offset
         return  cartesian_point.x > pygame.display.get_surface().get_size()[0] or \
                 cartesian_point.x < 0 or \
-                cartesian_point.y > pygame.display.get_surface().get_size()[1]-self.default_settings["hud_config"]["height"]
+                cartesian_point.y > pygame.display.get_surface().get_size()[1]
 
     def check_if_point_is_out_of_window(self, point):
         cartesian_point = pygame.math.Vector2(point[0], -point[1]) + self.offset
         return  cartesian_point.x > pygame.display.get_surface().get_size()[0] or \
                 cartesian_point.x < 0 or \
-                cartesian_point.y > 2*pygame.display.get_surface().get_size()[1]
+                cartesian_point.y > 3*pygame.display.get_surface().get_size()[1]
 
     def adjust(self, end_point_position):
         end_point_index = [pygame.math.Vector2(point[0], point[1]) for point in self.data].index(end_point_position)
@@ -104,7 +102,7 @@ class Trajectory:
         self.data = pos[:idx]
 
     def draw(self):
-        if True == self.is_visible():
+        if True == self.check_if_visible():
             for idx in range(0, len(self.data), 400):
                 if not self.check_if_point_is_out_of_screen(self.data[idx]):
                     pygame.draw.circle(surface=self.window, color=self.color_manager.white, center=self.data[idx]+self.offset, radius=1)

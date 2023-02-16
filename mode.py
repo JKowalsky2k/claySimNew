@@ -29,20 +29,20 @@ class Mode:
                 if 1 == self.space_press_counter:
                     self.start_first()
                     self.space_press_counter = 2
-                else:
+                elif 2 == self.space_press_counter:
                     self.start_second()
-                    self.space_press_counter = 1
+                    self.space_press_counter = 3
             elif self.index == 3:
                 if 1 == self.space_press_counter:
                     self.start_second()
                     self.space_press_counter = 2
-                else:
+                elif 2 == self.space_press_counter:
                     self.start_first()
-                    self.space_press_counter = 1
+                    self.space_press_counter = 3
             elif self.index == 4:
+                self.lock()
                 self.start_first()
                 self.start_second()
-            self.lock()
 
     def start_first(self):
         self.run_first = True
@@ -66,4 +66,6 @@ class Mode:
         self.is_locked = True
 
     def unlock(self):
+        if 3 == self.space_press_counter:
+            self.space_press_counter = 1
         self.is_locked = False
