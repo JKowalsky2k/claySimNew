@@ -21,12 +21,13 @@ class SimulationStateController(engineDefaultState.DefaultState):
         self.clay2 = clay.Clay(self.window, self.start_point2.get_position(), self.simulation_settings["size"]["default"])
         self.current_index1,  self.current_index2 = 0, 0
         self.simulation_speed1, self.simulation_speed2 = self.simulation_settings["speed"]["default"], self.simulation_settings["speed"]["default"]
-        self.setup()
+        self.mode_controller = mode.Mode(self.start_point2.is_added())
         self.create_gui()
 
     def setup(self):
         self.mode_controller = mode.Mode(self.start_point2.is_added())
         self.current_index1,  self.current_index2 = 0, 0
+        self.button_mode.set_text(f"{self.mode_controller.get_mode()}")
     
     def event_manager(self):
         for event in pygame.event.get():
